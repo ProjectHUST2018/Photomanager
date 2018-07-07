@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/ic_search_white_48dp"
+        android:title="search"
+        android:orderInCategory="80"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/trashView"
+        android:icon="@drawable/ic_delete_white_48dp"
+        android:title="@string/trash"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/timeSort"
+        android:title="@string/timeSort"
+        android:orderInCategory="80"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/sizeSort"
+        android:title="@string/sizeSort"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/modifySort"
+        android:title="@string/modifySort"
+        app:showAsAction="never"/>
+
+</menu>

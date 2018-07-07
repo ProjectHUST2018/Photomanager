@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="Content">#f9f9f9</color>>
     <color name="BottomBar">#ffffff</color>>
+    <color name="titleColor">#ffffff</color>
 </resources>

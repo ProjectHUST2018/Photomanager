@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">照片管理</string>
-    <string name="allPic">所有图片</string>
     <string name="photo">相册</string>
     <string name="trash">回收站</string>
+    <string name="timeSort">按时间排序</string>
+    <string name="sizeSort">按大小排序</string>
+    <string name="modifySort">按修改时间排序</string>
+    <string name="delAll">清空回收站</string>
+    <string name="recAll">回收全部</string>
+    <string name="searchHint">通过标签来搜索图片</string>
+    <string name="title_activity_trash">TrashActivity</string>
 </resources>
