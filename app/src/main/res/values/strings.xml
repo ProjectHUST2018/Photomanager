@@ -9,4 +9,5 @@
     <string name="recAll">回收全部</string>
     <string name="searchHint">通过标签来搜索图片</string>
     <string name="title_activity_trash">TrashActivity</string>
+    <string name="errorString">svarg</string>
 </resources>

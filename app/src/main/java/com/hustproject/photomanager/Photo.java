@@ -27,13 +27,15 @@ class Photo {
     private ExifInterface exif;
 
     public void addTag    (String tag) {
+        if(tag == "@string/errorString" || tag == null)return;
         Tag.add   (tag);
     }
     public void deleteTag (String tag) {
+        if(tag == "@string/errorString" || tag == null)return;
         Tag.remove(tag);
     }
 
-    Photo(final File item) throws Exception{
+    Photo(final File item) throws IOException{
 
         thisItem    =   item;
         isDeleted   =   false;
@@ -44,8 +46,6 @@ class Photo {
         exif        =   new ExifInterface(Path);
         photoSize   =   new FileInputStream(item).available();
         photoTime   =   exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL);  //拍摄时间
-
-        Tag.add(photoTime);
     }
 
     private long getTime(int[] res) {
@@ -63,7 +63,7 @@ class Photo {
         return c+(d+res[2]-1)*86400+res[3]*3600+res[4]*60+res[5];
     }
 
-    public int[]getPhotostandard(){
+    public int[]getPhotoStandard(){
         String start[] = new String[2];
         int res[] = new int[2];
 
@@ -82,7 +82,7 @@ class Photo {
     }
 
     public String getPhotoSize(){
-        if(photoSize == -1)return "-1";
+        if(photoSize == -1)return "@string/errorString";
 
         long tmp = photoSize;
         String[] unit = new String[]{"B","KB","MB","GB"};
@@ -98,12 +98,12 @@ class Photo {
         int res[] = new int[6];
         String tmp[] = new String[6];
 
-        tmp[0] = photoTime.substring(0,3);
-        tmp[1] = photoTime.substring(5,6);
-        tmp[2] = photoTime.substring(8,9);
-        tmp[3] = photoTime.substring(11,12);
-        tmp[4] = photoTime.substring(14,15);
-        tmp[5] = photoTime.substring(17,18);
+        tmp[0] = photoTime.substring(0,4);
+        tmp[1] = photoTime.substring(5,7);
+        tmp[2] = photoTime.substring(8,10);
+        tmp[3] = photoTime.substring(11,13);
+        tmp[4] = photoTime.substring(14,16);
+        tmp[5] = photoTime.substring(17,19);
 
         for(int i = 0; i <= 5; i++)
             res[i] = Integer.parseInt(tmp[i]);

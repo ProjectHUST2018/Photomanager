@@ -41,18 +41,24 @@ class MainActivity : AppCompatActivity() {
         toolbar = findViewById(R.id.toolbar)
         search = findViewById(R.id.searchView)
 
-        setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar)
+        searchView.setVoiceSearch(false)
 
         album = Scanner()
-        searchView.setVoiceSearch(false)
+        album.TagLoad()
         //album.Load()
     }
 
     override fun onStart() {
         super.onStart()
         album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
-        //searchView.setSuggestions(album)
+        //searchView.setSuggestions(album.getAllTag())
         Toast.makeText(getApplicationContext(),"Done.",Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        album.TagSave()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
