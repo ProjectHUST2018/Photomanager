@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var album:Scanner
     private lateinit var toolbar: android.support.v7.widget.Toolbar
     private lateinit var search: MaterialSearchView
+    private lateinit var container: LinearLayout
 
     private fun setAsTimeSort() {
 
@@ -34,12 +35,17 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private fun display(secPhoto:Array<Photo>) {
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         toolbar = findViewById(R.id.toolbar)
         search = findViewById(R.id.searchView)
+        container = findViewById(R.id.container)
 
         setSupportActionBar(toolbar)
         searchView.setVoiceSearch(false)
@@ -52,8 +58,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
-        //searchView.setSuggestions(album.getAllTag())
-        Toast.makeText(getApplicationContext(),"Done.",Toast.LENGTH_SHORT).show()
+        searchView.setSuggestions(album.getAllTag())
     }
 
     override fun onStop() {

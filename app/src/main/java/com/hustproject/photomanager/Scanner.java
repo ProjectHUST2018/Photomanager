@@ -26,6 +26,16 @@ public class Scanner{
     public Set<Photo> allPhoto;
     private Map<String,Integer> allTag;
 
+    public String[] getAllTag() {
+        int sz = 0;
+        String res[] = new String[allTag.size()];
+
+        for (Map.Entry<String, Integer> entry : allTag.entrySet())
+            if(entry.getValue() > 0)res[sz++]=entry.getKey();
+
+        return res;
+    }
+
     public void addTag(String tag) {
         if(tag == "@string/errorString" || tag == null)return;
         if(allTag.get(tag) == null)allTag.put(tag,1);
