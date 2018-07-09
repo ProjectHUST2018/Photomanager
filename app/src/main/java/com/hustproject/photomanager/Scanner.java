@@ -1,22 +1,15 @@
 package com.hustproject.photomanager;
 
-import android.content.Context;
-
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -37,21 +30,23 @@ public class Scanner{
     }
 
     public void addTag(String tag) {
-        if(tag == "@string/errorString" || tag == null)return;
+        if(tag == "-1" || tag == null)return;
         if(allTag.get(tag) == null)allTag.put(tag,1);
         else allTag.put(tag,allTag.get(tag)+1);
     }
 
     public void deleteTag(String tag) {
-        if(tag == "@string/errorString" || tag == null)return;
+        if(tag == "-1" || tag == null)return;
         allTag.put(tag,allTag.get(tag)-1);
     }
 
     private void addPhoto(Photo New) {
-        String date = New.photoTime.substring(0,4)+"年"+New.photoTime.substring(5,7)+"月"+New.photoTime.substring(8,10)+"日";
-        if(!New.Tag.contains(date)) {
-            addTag(date);
-            New.addTag(date);
+        if(New.photoTime != null && New.photoTime != "-1"){
+            String date= New.photoTimeStd;
+            if(!New.Tag.contains(date)) {
+                addTag(date);
+                New.addTag(date);
+            }
         }
         allPhoto.add(New);
     }
@@ -131,6 +126,14 @@ public class Scanner{
         }
 
         out.close();
+    }
+
+    public Photo[] getAllPhoto() {
+        int sz = 0;
+        Photo[] all= new Photo[allPhoto.size()];
+        for(Photo item :allPhoto)
+            all[sz++] = item;
+        return all;
     }
 
     Scanner() throws IOException{

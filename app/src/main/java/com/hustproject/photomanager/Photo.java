@@ -1,20 +1,14 @@
 package com.hustproject.photomanager;
+
 import android.media.ExifInterface;
-import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.io.FileOutputStream;
 import java.io.IOException;
+
 class Photo {
     public File thisItem;
     public int[] delete;                                                      //相片的删除时间
@@ -23,15 +17,17 @@ class Photo {
     public Set<String> Tag;                                                   //标签
     public String Path;                                                       //相片的存储路
     public String photoTime;
+    public String photoTimeStd;
+    public long countSec;
 
     private ExifInterface exif;
 
     public void addTag    (String tag) {
-        if(tag == "@string/errorString" || tag == null)return;
+        if(tag == "-1" || tag == null)return;
         Tag.add   (tag);
     }
     public void deleteTag (String tag) {
-        if(tag == "@string/errorString" || tag == null)return;
+        if(tag == "-1" || tag == null)return;
         Tag.remove(tag);
     }
 
@@ -46,21 +42,40 @@ class Photo {
         exif        =   new ExifInterface(Path);
         photoSize   =   new FileInputStream(item).available();
         photoTime   =   exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL);  //拍摄时间
+
+        if(photoTime == null)photoTime = "-1";
+        if(photoTime != "-1") {
+            photoTimeStd = photoTime.substring(0, 4) + "年" + photoTime.substring(5, 7) + "月" + photoTime.substring(8, 10) + "日";
+            countSec = getPhotoTime();
+        }
     }
 
-    private long getTime(int[] res) {
-        long a,b,c,d;
-        int mont1[] = {0,31,60,91,121,152,182,213,244,274,305};
-        int mont2[] = {0,31,59,90,120,151,181,212,243,274,304};
+    private long getPhotoTime() {
+        int res[] = new int[6];
+        String tmp[] = new String[6];
 
-        a=(res[0]-2000)/4;
-        b= res[0]-2000 -a;
-        c=a*31622400+b*31536000;//年
+        tmp[0] = photoTime.substring(0,4);
+        tmp[1] = photoTime.substring(5,7);
+        tmp[2] = photoTime.substring(8,10);
+        tmp[3] = photoTime.substring(11,13);
+        tmp[4] = photoTime.substring(14,16);
+        tmp[5] = photoTime.substring(17,19);
+
+        for(int i = 0; i <= 5; i++)
+            res[i] = Integer.parseInt(tmp[i]);
+
+        long a,b,c,d;
+        int mont1[] = {0,31,60,91,121,152,182,213,244,274,305,335};
+        int mont2[] = {0,31,59,90,120,151,181,212,243,274,304,334};
+
+        a=(long)(res[0]-1950)/4;
+        b=(long) res[0]-1950 -a;
+        c=a*(long)31622400+b*(long)31536000;//年
 
         if((res[0]%4==0&&res[0]%100!=0)||res[0]%400==0)d=mont1[res[1]-1];
         else d=mont2[res[1]-1];
 
-        return c+(d+res[2]-1)*86400+res[3]*3600+res[4]*60+res[5];
+        return c+(d+res[2]-1)*(long)86400+res[3]*(long)3600+res[4]*(long)60+(long)res[5];
     }
 
     public int[]getPhotoStandard(){
@@ -82,7 +97,7 @@ class Photo {
     }
 
     public String getPhotoSize(){
-        if(photoSize == -1)return "@string/errorString";
+        if(photoSize == -1)return "-1";
 
         long tmp = photoSize;
         String[] unit = new String[]{"B","KB","MB","GB"};
@@ -92,23 +107,6 @@ class Photo {
         for(i=0;i<3&&tmp>=1024;i++,tmp/=1024);
 
         return  df.format((double)photoSize)+unit[i];
-    }
-
-    public long getPhotoTime() {
-        int res[] = new int[6];
-        String tmp[] = new String[6];
-
-        tmp[0] = photoTime.substring(0,4);
-        tmp[1] = photoTime.substring(5,7);
-        tmp[2] = photoTime.substring(8,10);
-        tmp[3] = photoTime.substring(11,13);
-        tmp[4] = photoTime.substring(14,16);
-        tmp[5] = photoTime.substring(17,19);
-
-        for(int i = 0; i <= 5; i++)
-            res[i] = Integer.parseInt(tmp[i]);
-
-        return getTime(res);
     }
 
     public double[] getPhotoGPS(){

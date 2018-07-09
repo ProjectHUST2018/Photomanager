@@ -3,7 +3,9 @@
     <color name="colorPrimary">#1e88e5</color>
     <color name="colorPrimaryDark">#1959c7</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="Content">#ffffff</color>>
-    <color name="BottomBar">#ffffff</color>>
+    <color name="Content">#ffffff</color>
+    <color name="BottomBar">#ffffff</color>
     <color name="titleColor">#ffffff</color>
+    <color name="font">#000000</color>
+    <color name="backGray">#e0e0e0</color>
 </resources>
