@@ -25,6 +25,7 @@ public class Scanner{
     File file;
     public Set<Photo> allPhoto;
     private Map<String,Integer> allTag;
+    public List<Photo> delPhoto;
 
     public String[] getAllTag() {
         int sz = 0, cnt = 0;
@@ -43,10 +44,10 @@ public class Scanner{
     public Photo[] getAllPhoto(int mode) {
         int sz = 0, cnt = 0;
         for(Photo item :allPhoto)
-            if(mode == 1 && !item.isDeleted) sz++;
+            if((mode == 1 && !item.isDeleted)||(mode == 2 && item.isDeleted)) sz++;
         Photo[] all= new Photo[sz];
         for(Photo item :allPhoto)
-            if(mode == 1 && !item.isDeleted)
+            if((mode == 1 && !item.isDeleted)||(mode == 2 && item.isDeleted))
                 all[cnt++]=item;
         return all;
     }
@@ -157,6 +158,7 @@ public class Scanner{
         allPhoto  = new HashSet<Photo>();
         allTag  = new HashMap<String,Integer>();
         file = new File(dirPath+"TagSave");
+        delPhoto = new LinkedList<Photo>();
 
         if(!dir.exists())dir.mkdir();
         if(!file.exists()) {

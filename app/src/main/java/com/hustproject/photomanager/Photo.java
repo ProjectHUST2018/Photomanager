@@ -46,13 +46,33 @@ class Photo {
         modifyTime  =   item.lastModified();
 
         if(photoTime == null) {
-            photoTime = exif.getAttribute(ExifInterface.TAG_DATETIME_DIGITIZED);
+             photoTime = exif.getAttribute(ExifInterface.TAG_DATETIME_DIGITIZED);
             if(photoTime == null)photoTime = "-1";
         }
         if(photoTime != "-1") {
             photoTimeStd = photoTime.substring(0, 4) + "年" + photoTime.substring(5, 7) + "月" + photoTime.substring(8, 10) + "日";
             countSec = getPhotoTime();
         }
+    }
+
+    private long calc(int[] res) {
+        long a,b,c,d;
+        int mont1[] = {0,31,60,91,121,152,182,213,244,274,305,335};
+        int mont2[] = {0,31,59,90,120,151,181,212,243,274,304,334};
+
+        a=(long)(res[0]-1950)/4;
+        b=(long) res[0]-1950 -a;
+        c=a*(long)31622400+b*(long)31536000;//年
+
+        if((res[0]%4==0&&res[0]%100!=0)||res[0]%400==0)d=mont1[res[1]-1];
+        else d=mont2[res[1]-1];
+
+        return c+(d+res[2]-1)*(long)86400+res[3]*(long)3600+res[4]*(long)60+(long)res[5];
+    }
+
+    public long getDeleteTime(){
+        if(!isDeleted)return -1;
+        return calc(delete);
     }
 
     private long getPhotoTime() {
@@ -69,18 +89,7 @@ class Photo {
         for(int i = 0; i <= 5; i++)
             res[i] = Integer.parseInt(tmp[i]);
 
-        long a,b,c,d;
-        int mont1[] = {0,31,60,91,121,152,182,213,244,274,305,335};
-        int mont2[] = {0,31,59,90,120,151,181,212,243,274,304,334};
-
-        a=(long)(res[0]-1950)/4;
-        b=(long) res[0]-1950 -a;
-        c=a*(long)31622400+b*(long)31536000;//年
-
-        if((res[0]%4==0&&res[0]%100!=0)||res[0]%400==0)d=mont1[res[1]-1];
-        else d=mont2[res[1]-1];
-
-        return c+(d+res[2]-1)*(long)86400+res[3]*(long)3600+res[4]*(long)60+(long)res[5];
+        return calc(res);
     }
 
     public int[]getPhotoStandard(){
@@ -125,10 +134,6 @@ class Photo {
             else res[i] = Double.valueOf(tmp[i].toString());
 
         return res;
-    }
-
-    public void remove(){
-        thisItem.delete();
     }
 
     public void delete(){

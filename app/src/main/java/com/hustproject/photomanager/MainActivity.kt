@@ -7,6 +7,7 @@ import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -16,6 +17,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import android.widget.LinearLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.android.synthetic.main.photo.*
 import java.util.*
 import kotlin.Comparator
 
@@ -25,11 +27,9 @@ class MainActivity : AppCompatActivity() {
     private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     private val opt = RequestOptions().centerCrop()
-    private lateinit var album: Scanner
 
     private var sortMode: Int = 1
     private lateinit var raw: MutableList<LinearLayout>
-    private var lastLen = 0
 
     private fun pushin(tp: LinearLayout) {
         var margin = View.inflate(this, R.layout.margin, null) as LinearLayout
@@ -64,21 +64,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun display(mode: Int) {
-        var count = 0
-        lateinit var tp: LinearLayout
-        var secPhoto = album.getAllPhoto(1)
-        if(mode == sortMode && lastLen == secPhoto.size)return
-        lastLen = secPhoto.size
+            var count = 0
+            lateinit var tp: LinearLayout
+            var secPhoto = (applicationContext as data).album.getAllPhoto(1)
 
-        for (item in raw)
-            container.removeView(item)
-        raw.clear()
+            for (item in raw)
+                container.removeView(item)
+            raw.clear()
 
-        when (mode) {
-            1 -> Arrays.sort(secPhoto, cmp1())
-            2 -> Arrays.sort(secPhoto, cmp2())
-            3 -> Arrays.sort(secPhoto, cmp3())
-        }
+            when (mode) {
+                1 -> Arrays.sort(secPhoto, cmp1())
+                2 -> Arrays.sort(secPhoto, cmp2())
+                3 -> Arrays.sort(secPhoto, cmp3())
+            }
 
         for (i in secPhoto.indices) {
             if ((i == 0 || secPhoto[i - 1].photoTimeStd != secPhoto[i].photoTimeStd) && mode == 1) {
@@ -98,13 +96,16 @@ class MainActivity : AppCompatActivity() {
                 tp = View.inflate(this, R.layout.photo, null) as LinearLayout
             }
 
-            count++;
-            when (count) {
-                1 -> Glide.with(this).load(secPhoto[i].thisItem).apply(opt).into(tp.findViewById(R.id.imageView1))
-                2 -> Glide.with(this).load(secPhoto[i].thisItem).apply(opt).into(tp.findViewById(R.id.imageView2))
-                3 -> Glide.with(this).load(secPhoto[i].thisItem).apply(opt).into(tp.findViewById(R.id.imageView3))
-                4 -> Glide.with(this).load(secPhoto[i].thisItem).apply(opt).into(tp.findViewById(R.id.imageView4))
+            count++
+            var thisImage:ImageView = when (count) {
+                1 -> tp.findViewById(R.id.imageView1)
+                2 -> tp.findViewById(R.id.imageView2)
+                3 -> tp.findViewById(R.id.imageView3)
+                else -> tp.findViewById(R.id.imageView4)
             }
+
+            registerForContextMenu(thisImage)
+            Glide.with(this).load(secPhoto[i].thisItem).apply(opt).into(thisImage)
 
             if (count == 4) count = 0
         }
@@ -126,8 +127,11 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         searchView.setVoiceSearch(false)
 
+        var starter = Intent(this,SearchActivity::class.java)
         searchView.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
+                starter.putExtra("key",query)
+                startActivity(starter)
                 return false
             }
 
@@ -136,20 +140,20 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        album = Scanner()
-        album.TagLoad()
+        (applicationContext as data).init()
+        (applicationContext as data).album.TagLoad()
     }
 
     override fun onStart() {
         super.onStart()
-        album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
-        searchView.setSuggestions(album.getAllTag())
+        (applicationContext as data).album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
+        searchView.setSuggestions((applicationContext as data).album.getAllTag())
         display(sortMode)
     }
 
     override fun onStop() {
         super.onStop()
-        album.TagSave()
+        (applicationContext as data).album.TagSave()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -188,16 +192,22 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onCreateContextMenu(menu: ContextMenu, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        super.onCreateContextMenu(menu!!, v, menuInfo)
+        menu.add(0, 1, Menu.NONE, "编辑标签")
+        menu.add(0, 4, Menu.NONE, "移入回收站")
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
             finish()
         else
         {
-            album = Scanner()
-            album.TagLoad()
-            album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
-            searchView.setSuggestions(album.getAllTag())
+            (applicationContext as data).init()
+            (applicationContext as data).album.TagLoad()
+            (applicationContext as data).album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
+            searchView.setSuggestions((applicationContext as data).album.getAllTag())
             display(sortMode);
         }
     }
