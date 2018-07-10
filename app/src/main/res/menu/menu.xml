@@ -6,7 +6,7 @@
         android:id="@+id/search"
         android:icon="@drawable/ic_search_white_48dp"
         android:title="search"
-        android:orderInCategory="80"
+        android:orderInCategory="100"
         app:showAsAction="always" />
 
     <item
@@ -25,13 +25,13 @@
     <item
         android:id="@+id/sizeSort"
         android:title="@string/sizeSort"
-        android:orderInCategory="100"
+        android:orderInCategory="90"
         app:showAsAction="never"/>
 
     <item
         android:id="@+id/modifySort"
         android:title="@string/modifySort"
-        android:orderInCategory="90"
+        android:orderInCategory="100"
         app:showAsAction="never"/>
 
 </menu>

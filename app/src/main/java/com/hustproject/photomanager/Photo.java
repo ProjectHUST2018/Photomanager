@@ -18,6 +18,7 @@ class Photo {
     public String Path;                                                       //相片的存储路
     public String photoTime;
     public String photoTimeStd;
+    public long modifyTime;
     public long countSec;
 
     private ExifInterface exif;
@@ -42,6 +43,7 @@ class Photo {
         exif        =   new ExifInterface(Path);
         photoSize   =   new FileInputStream(item).available();
         photoTime   =   exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL);  //拍摄时间
+        modifyTime  =   item.lastModified();
 
         if(photoTime == null)photoTime = "-1";
         if(photoTime != "-1") {
@@ -97,8 +99,6 @@ class Photo {
     }
 
     public String getPhotoSize(){
-        if(photoSize == -1)return "-1";
-
         long tmp = photoSize;
         String[] unit = new String[]{"B","KB","MB","GB"};
         DecimalFormat df = new DecimalFormat("#.00");

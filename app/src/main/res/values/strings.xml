@@ -7,7 +7,8 @@
     <string name="modifySort">按修改时间排序</string>
     <string name="delAll">清空回收站</string>
     <string name="recAll">回收全部</string>
-    <string name="searchHint">通过标签来搜索图片</string>
+    <string name="searchHint">输入完整的标签来搜索图片</string>
     <string name="title_activity_trash">TrashActivity</string>
     <string name="errorString">svarg</string>
+    <string name="title_activity_search">SearchActivity</string>
 </resources>
