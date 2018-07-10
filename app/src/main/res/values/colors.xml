@@ -8,4 +8,5 @@
     <color name="titleColor">#ffffff</color>
     <color name="font">#000000</color>
     <color name="backGray">#e0e0e0</color>
+    <color name="black">#000000</color>
 </resources>

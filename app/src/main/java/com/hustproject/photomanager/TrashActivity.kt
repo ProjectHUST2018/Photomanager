@@ -2,6 +2,7 @@ package com.hustproject.photomanager
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.ContextMenu
 import android.view.Menu
 import android.view.View
 import android.widget.ImageView
@@ -16,7 +17,6 @@ import java.util.*
 
 class TrashActivity : AppCompatActivity() {
 
-    private val opt = RequestOptions().centerCrop()
     private lateinit var raw :MutableList<LinearLayout>
 
     private fun pushin(tp: LinearLayout) {
@@ -37,15 +37,17 @@ class TrashActivity : AppCompatActivity() {
         for (i in secPhoto.indices) {
             if(i % 4 == 0 && i != 0) {
                 pushin(tp)
-                View.inflate(this, R.layout.photo, null) as LinearLayout
+                tp = View.inflate(this, R.layout.photo, null) as LinearLayout
             }
+
             var thisImage: ImageView = when (i % 4) {
                 0 -> tp.findViewById(R.id.imageView1)
                 1 -> tp.findViewById(R.id.imageView2)
                 2 -> tp.findViewById(R.id.imageView3)
                 else -> tp.findViewById(R.id.imageView4)
             }
-            Glide.with(this).load(secPhoto[i].thisItem).apply(opt).into(thisImage)
+            Glide.with(this).load(secPhoto[i].thisItem).apply((applicationContext as data).opt).into(thisImage)
+            registerForContextMenu(thisImage)
         }
         if (secPhoto.isNotEmpty()) pushin(tp)
 
@@ -60,6 +62,7 @@ class TrashActivity : AppCompatActivity() {
 
         raw = mutableListOf()
 
+        toolbarTrash.setTitle("回收站")
         setSupportActionBar(toolbarTrash)
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -74,5 +77,11 @@ class TrashActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         getMenuInflater().inflate(R.menu.trash,menu)
         return true
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        super.onCreateContextMenu(menu!!, v, menuInfo)
+        menu.add(0, 1, Menu.NONE, "完全删除")
+        menu.add(0, 2, Menu.NONE, "恢复原位")
     }
 }

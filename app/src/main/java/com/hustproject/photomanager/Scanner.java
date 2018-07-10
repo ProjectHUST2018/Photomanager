@@ -41,15 +41,28 @@ public class Scanner{
         return res;
     }
 
-    public Photo[] getAllPhoto(int mode) {
-        int sz = 0, cnt = 0;
+    public List<Photo> getAllPhoto(String a) {
+        List<Photo>res = new LinkedList<>();
         for(Photo item :allPhoto)
-            if((mode == 1 && !item.isDeleted)||(mode == 2 && item.isDeleted)) sz++;
-        Photo[] all= new Photo[sz];
+            if(item.Tag.contains(a))
+                res.add(item);
+        for(Photo item :allPhoto)
+            if(!item.Tag.contains(a)){
+                boolean f = false;
+                for(String tp : item.Tag)
+                    if(tp.indexOf(a) != -1)
+                        {f = true;break;}
+                if(f)res.add(item);
+            }
+        return res;
+    }
+
+    public List<Photo> getAllPhoto(int mode) {
+        List<Photo>res = new LinkedList<>();
         for(Photo item :allPhoto)
             if((mode == 1 && !item.isDeleted)||(mode == 2 && item.isDeleted))
-                all[cnt++]=item;
-        return all;
+                res.add(item);
+        return res;
     }
 
     public void addTag(String tag) {

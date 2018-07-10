@@ -26,11 +26,12 @@
             android:name=".TrashActivity"
             android:label="@string/title_activity_trash"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".SearchActivity"
             android:label="@string/title_activity_search"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".gallery"></activity>
     </application>
 
 </manifest>

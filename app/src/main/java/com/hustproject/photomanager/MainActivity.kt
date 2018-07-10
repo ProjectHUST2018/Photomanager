@@ -3,6 +3,7 @@ package com.hustproject.photomanager
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -25,8 +26,6 @@ import kotlin.Comparator
 class MainActivity : AppCompatActivity() {
 
     private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
-    private val opt = RequestOptions().centerCrop()
 
     private var sortMode: Int = 1
     private lateinit var raw: MutableList<LinearLayout>
@@ -63,6 +62,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun show(photo:Photo) {
+        (applicationContext as data).tmp = photo
+        var starter = Intent(this,gallery::class.java)
+        startActivity(starter)
+    }
+
     private fun display(mode: Int) {
             var count = 0
             lateinit var tp: LinearLayout
@@ -73,9 +78,9 @@ class MainActivity : AppCompatActivity() {
             raw.clear()
 
             when (mode) {
-                1 -> Arrays.sort(secPhoto, cmp1())
-                2 -> Arrays.sort(secPhoto, cmp2())
-                3 -> Arrays.sort(secPhoto, cmp3())
+                1 -> Collections.sort(secPhoto, cmp1())
+                2 -> Collections.sort(secPhoto, cmp2())
+                3 -> Collections.sort(secPhoto, cmp3())
             }
 
         for (i in secPhoto.indices) {
@@ -105,7 +110,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             registerForContextMenu(thisImage)
-            Glide.with(this).load(secPhoto[i].thisItem).apply(opt).into(thisImage)
+            Glide.with(this).load(secPhoto[i].thisItem).apply((applicationContext as data).opt).into(thisImage)
+            thisImage.setOnClickListener(View.OnClickListener {
+                view:View -> show(secPhoto[i])
+            })
 
             if (count == 4) count = 0
         }
@@ -195,7 +203,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateContextMenu(menu: ContextMenu, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         super.onCreateContextMenu(menu!!, v, menuInfo)
         menu.add(0, 1, Menu.NONE, "编辑标签")
-        menu.add(0, 4, Menu.NONE, "移入回收站")
+        menu.add(0, 2, Menu.NONE, "移入回收站")
+        menu.add(0, 2, Menu.NONE, "查看详情")
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

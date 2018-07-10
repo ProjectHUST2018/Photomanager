@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.io.IOException;
 
-class Photo {
+public class Photo {
     public File thisItem;
     public int[] delete;                                                      //相片的删除时间
     public long  photoSize;                                                   //相片的大小
