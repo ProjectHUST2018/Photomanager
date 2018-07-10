@@ -27,13 +27,28 @@ public class Scanner{
     private Map<String,Integer> allTag;
 
     public String[] getAllTag() {
-        int sz = 0;
+        int sz = 0, cnt = 0;
+
+        for (Map.Entry<String, Integer> entry : allTag.entrySet())
+            if(entry.getValue() > 0)cnt++;
+
         String res[] = new String[allTag.size()];
 
         for (Map.Entry<String, Integer> entry : allTag.entrySet())
             if(entry.getValue() > 0)res[sz++]=entry.getKey();
 
         return res;
+    }
+
+    public Photo[] getAllPhoto(int mode) {
+        int sz = 0, cnt = 0;
+        for(Photo item :allPhoto)
+            if(mode == 1 && !item.isDeleted) sz++;
+        Photo[] all= new Photo[sz];
+        for(Photo item :allPhoto)
+            if(mode == 1 && !item.isDeleted)
+                all[cnt++]=item;
+        return all;
     }
 
     public void addTag(String tag) {
@@ -133,14 +148,6 @@ public class Scanner{
         }
 
         out.close();
-    }
-
-    public Photo[] getAllPhoto() {
-        int sz = 0;
-        Photo[] all= new Photo[allPhoto.size()];
-        for(Photo item :allPhoto)
-            all[sz++] = item;
-        return all;
     }
 
     Scanner() throws IOException{

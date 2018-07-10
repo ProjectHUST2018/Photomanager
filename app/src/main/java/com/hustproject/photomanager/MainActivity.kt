@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     private var sortMode: Int = 1
     private lateinit var raw: MutableList<LinearLayout>
+    private var lastLen = 0
 
     private fun pushin(tp: LinearLayout) {
         var margin = View.inflate(this, R.layout.margin, null) as LinearLayout
@@ -40,32 +41,34 @@ class MainActivity : AppCompatActivity() {
 
     private class cmp1 : Comparator<Photo> {
         override fun compare(a: Photo, b: Photo): Int {
-            if (a.countSec < b.countSec) return 1;
-            if (a.countSec == b.countSec) return 0;
-            return -1;
+            if (a.countSec < b.countSec) return 1
+            if (a.countSec == b.countSec) return 0
+            return -1
         }
     }
 
     private class cmp2 : Comparator<Photo> {
         override fun compare(a: Photo, b: Photo): Int {
-            if (a.photoSize < b.photoSize) return 1;
-            if (a.photoSize == b.photoSize) return 0;
-            return -1;
+            if (a.photoSize < b.photoSize) return 1
+            if (a.photoSize == b.photoSize) return 0
+            return -1
         }
     }
 
     private class cmp3 : Comparator<Photo> {
         override fun compare(a: Photo, b: Photo): Int {
-            if (a.modifyTime  < b.modifyTime) return 1;
-            if (a.modifyTime == b.modifyTime) return 0;
-            return -1;
+            if (a.modifyTime  < b.modifyTime) return 1
+            if (a.modifyTime == b.modifyTime) return 0
+            return -1
         }
     }
 
     private fun display(mode: Int) {
         var count = 0
         lateinit var tp: LinearLayout
-        var secPhoto = album.getAllPhoto()
+        var secPhoto = album.getAllPhoto(1)
+        if(mode == sortMode && lastLen == secPhoto.size)return
+        lastLen = secPhoto.size
 
         for (item in raw)
             container.removeView(item)
@@ -78,16 +81,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         for (i in secPhoto.indices) {
-            if (secPhoto[i].isDeleted == true) continue
-
             if ((i == 0 || secPhoto[i - 1].photoTimeStd != secPhoto[i].photoTimeStd) && mode == 1) {
                 if (i != 0) pushin(tp)
 
                 tp = View.inflate(this, R.layout.time_tag, null) as LinearLayout
 
                 if (secPhoto[i].photoTime != "-1")
-                    (tp.findViewById(R.id.timeTag) as TextView).setText("   " + secPhoto[i].photoTimeStd + "   ")
-                else (tp.findViewById(R.id.timeTag) as TextView).setText("   其他   ")
+                    (tp.findViewById(R.id.timeTag) as TextView).setText(" " + secPhoto[i].photoTimeStd + " ")
+                else (tp.findViewById(R.id.timeTag) as TextView).setText(" 其他 ")
 
                 count = 0
             }
@@ -186,8 +187,6 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
-
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)

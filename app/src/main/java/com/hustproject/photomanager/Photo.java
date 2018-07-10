@@ -45,7 +45,10 @@ class Photo {
         photoTime   =   exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL);  //拍摄时间
         modifyTime  =   item.lastModified();
 
-        if(photoTime == null)photoTime = "-1";
+        if(photoTime == null) {
+            photoTime = exif.getAttribute(ExifInterface.TAG_DATETIME_DIGITIZED);
+            if(photoTime == null)photoTime = "-1";
+        }
         if(photoTime != "-1") {
             photoTimeStd = photoTime.substring(0, 4) + "年" + photoTime.substring(5, 7) + "月" + photoTime.substring(8, 10) + "日";
             countSec = getPhotoTime();
