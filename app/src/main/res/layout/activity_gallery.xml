@@ -2,15 +2,25 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gallery"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
+    android:theme="@style/AppTheme"
     tools:context=".gallery">
 
-    <ImageView
-        android:id="@+id/Image"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarGallery"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:srcCompat="@android:color/transparent"/>
+        android:layout_height="?actionBarSize"
+        android:background="@android:color/transparent"
+        app:titleTextColor="@color/titleColor"
+        app:subtitleTextColor="@color/titleColor">
+    </android.support.v7.widget.Toolbar>
+
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/photoView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </android.support.constraint.ConstraintLayout>

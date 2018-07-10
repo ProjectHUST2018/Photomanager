@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class Photo {
     public File thisItem;
-    public int[] delete;                                                      //相片的删除时间
+    public int[] delete = new int[6];                                                      //相片的删除时间
     public long  photoSize;                                                   //相片的大小
     public Boolean  isDeleted;                                                //判断相片是否被删除
     public Set<String> Tag;                                                   //标签
@@ -107,7 +107,7 @@ public class Photo {
     }
 
     public String getPhotoName(){
-        return Path.substring(Path.lastIndexOf("/")+1,Path.lastIndexOf("."));                                  //相片的名字
+        return Path.substring(Path.lastIndexOf("/")+1,Path.length());                                  //相片的名字
     }
 
     public String getPhotoSize(){
@@ -145,5 +145,15 @@ public class Photo {
         delete[3]    =   c.get(Calendar.HOUR_OF_DAY);
         delete[4]    =   c.get(Calendar.MINUTE);
         delete[5]    =   c.get(Calendar.SECOND);
+    }
+
+    public void recover(){
+        isDeleted    =   false;
+        delete[0]    =   0;
+        delete[1]    =   0;
+        delete[2]    =   0;
+        delete[3]    =   0;
+        delete[4]    =   0;
+        delete[5]    =   0;
     }
 }

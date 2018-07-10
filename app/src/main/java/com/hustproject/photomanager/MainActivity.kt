@@ -19,8 +19,10 @@ import android.widget.LinearLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.photo.*
+import kotlinx.android.synthetic.main.photo.view.*
 import java.util.*
 import kotlin.Comparator
+import kotlin.collections.HashMap
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private var sortMode: Int = 1
     private lateinit var raw: MutableList<LinearLayout>
+    private lateinit var finder:MutableMap<ImageView,Photo>
 
     private fun pushin(tp: LinearLayout) {
         var margin = View.inflate(this, R.layout.margin, null) as LinearLayout
@@ -62,6 +65,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun manageTag() {
+
+    }
+
     private fun show(photo:Photo) {
         (applicationContext as data).tmp = photo
         var starter = Intent(this,gallery::class.java)
@@ -73,8 +80,10 @@ class MainActivity : AppCompatActivity() {
             lateinit var tp: LinearLayout
             var secPhoto = (applicationContext as data).album.getAllPhoto(1)
 
-            for (item in raw)
+            for (item in raw) {
+                finder.remove(item.imageView1)
                 container.removeView(item)
+            }
             raw.clear()
 
             when (mode) {
@@ -103,10 +112,10 @@ class MainActivity : AppCompatActivity() {
 
             count++
             var thisImage:ImageView = when (count) {
-                1 -> tp.findViewById(R.id.imageView1)
-                2 -> tp.findViewById(R.id.imageView2)
-                3 -> tp.findViewById(R.id.imageView3)
-                else -> tp.findViewById(R.id.imageView4)
+                1 -> tp.imageView1
+                2 -> tp.imageView2
+                3 -> tp.imageView3
+                else -> tp.imageView4
             }
 
             registerForContextMenu(thisImage)
@@ -114,6 +123,7 @@ class MainActivity : AppCompatActivity() {
             thisImage.setOnClickListener(View.OnClickListener {
                 view:View -> show(secPhoto[i])
             })
+            finder[thisImage] = secPhoto[i]
 
             if (count == 4) count = 0
         }
@@ -129,6 +139,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        finder = HashMap()
         raw = mutableListOf()
 
         sortMode = 1
@@ -204,7 +215,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreateContextMenu(menu!!, v, menuInfo)
         menu.add(0, 1, Menu.NONE, "编辑标签")
         menu.add(0, 2, Menu.NONE, "移入回收站")
-        menu.add(0, 2, Menu.NONE, "查看详情")
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+       /* var info = item.menuInfo as AdapterView.AdapterContextMenuInfo
+        when(item.itemId){
+            1 -> manageTag()
+            2 -> {
+                (applicationContext as data).album.delete(finder[info.targetView])
+                display(sortMode)
+            }
+        }*/
+        return super.onContextItemSelected(item)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

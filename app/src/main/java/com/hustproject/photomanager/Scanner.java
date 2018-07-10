@@ -58,10 +58,13 @@ public class Scanner{
     }
 
     public List<Photo> getAllPhoto(int mode) {
-        List<Photo>res = new LinkedList<>();
-        for(Photo item :allPhoto)
-            if((mode == 1 && !item.isDeleted)||(mode == 2 && item.isDeleted))
+        List<Photo>res;
+        if(mode == 2)res = delPhoto;
+        else {
+            res = new LinkedList<>();
+            for (Photo item : allPhoto)
                 res.add(item);
+        }
         return res;
     }
 
@@ -145,6 +148,27 @@ public class Scanner{
                 addPhoto(thisPhoto);
         }
 
+        ft = in.readLine();
+        if(ft == null)return;
+        size = Integer.valueOf(ft);
+        for(int i = 0; i < size; i++) {
+            File tmp = new File(in.readLine());
+            Photo thisPhoto;
+            if(tmp.exists())thisPhoto = new Photo(tmp);
+            else thisPhoto = null;
+
+            int tp = Integer.valueOf(in.readLine());
+            for(int j = 0; j < tp; j++) {
+                String tt = in.readLine();
+                if (thisPhoto != null) {
+                    thisPhoto.addTag(tt);
+                    addTag(tt);
+                }
+            }
+            if(thisPhoto != null)
+                delPhoto.add(thisPhoto);
+        }
+
         in.close();
     }
 
@@ -160,8 +184,25 @@ public class Scanner{
             for(String item : photo.Tag)
                 out.write((item+"\n").getBytes());
         }
+        out.write((delPhoto.size()+"\n").getBytes());
+        for(Photo photo : delPhoto){
+            out.write((photo.Path+"\n").getBytes());
+            out.write((photo.Tag.size()+"\n").getBytes());
+            for(String item : photo.Tag)
+                out.write((item+"\n").getBytes());
+        }
 
         out.close();
+    }
+
+    public void delete(Photo item) {
+        if(!allPhoto.contains(item))return;
+        for(String tag:item.Tag)
+            deleteTag(tag);
+        if(item.photoTime != "-1")
+            deleteTag(item.photoTimeStd);
+        delPhoto.add(item);
+        allPhoto.remove(item);
     }
 
     Scanner() throws IOException{
@@ -177,7 +218,7 @@ public class Scanner{
         if(!file.exists()) {
             file.createNewFile();
             FileOutputStream out = new FileOutputStream(file);
-            out.write("0".getBytes());
+            out.write(("0"+"\n"+"0").getBytes());
             out.close();
         }
     }
