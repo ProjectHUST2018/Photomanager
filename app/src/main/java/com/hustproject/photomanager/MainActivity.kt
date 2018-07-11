@@ -1,6 +1,7 @@
 package com.hustproject.photomanager
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -20,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.photo.*
 import kotlinx.android.synthetic.main.photo.view.*
+import java.io.File
 import java.util.*
 import kotlin.Comparator
 import kotlin.collections.HashMap
@@ -30,8 +32,8 @@ class MainActivity : AppCompatActivity() {
     private val PERMISSIONS_STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
     private var sortMode: Int = 1
-    private lateinit var raw: MutableList<LinearLayout>
-    private lateinit var finder:MutableMap<ImageView,Photo>
+    private var raw: MutableList<LinearLayout> = mutableListOf()
+    private var finder:MutableMap<ImageView,Photo> = HashMap()
 
     private fun pushin(tp: LinearLayout) {
         var margin = View.inflate(this, R.layout.margin, null) as LinearLayout
@@ -65,32 +67,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun manageTag() {
-
+    private class cmp4 : Comparator<Photo> {
+        override fun compare(a: Photo, b: Photo): Int {
+            if (a.deleteTime  < b.deleteTime) return 1
+            if (a.deleteTime == b.deleteTime) return 0
+            return -1
+        }
     }
 
-    private fun show(photo:Photo) {
-        (applicationContext as data).tmp = photo
-        var starter = Intent(this,gallery::class.java)
-        startActivity(starter)
-    }
+    private fun display(secPhoto:List<Photo>,mode: Int) {
+        var count = 0
+        lateinit var tp: LinearLayout
+        for (item in raw) {
+            finder.remove(item.imageView1)
+            container.removeView(item)
+        }
+        raw.clear()
 
-    private fun display(mode: Int) {
-            var count = 0
-            lateinit var tp: LinearLayout
-            var secPhoto = (applicationContext as data).album.getAllPhoto(1)
-
-            for (item in raw) {
-                finder.remove(item.imageView1)
-                container.removeView(item)
-            }
-            raw.clear()
-
-            when (mode) {
-                1 -> Collections.sort(secPhoto, cmp1())
-                2 -> Collections.sort(secPhoto, cmp2())
-                3 -> Collections.sort(secPhoto, cmp3())
-            }
+        when (mode) {
+            1 -> Collections.sort(secPhoto, cmp1())
+            2 -> Collections.sort(secPhoto, cmp2())
+            3 -> Collections.sort(secPhoto, cmp3())
+            4 -> Collections.sort(secPhoto, cmp4())
+        }
 
         for (i in secPhoto.indices) {
             if ((i == 0 || secPhoto[i - 1].photoTimeStd != secPhoto[i].photoTimeStd) && mode == 1) {
@@ -127,10 +126,19 @@ class MainActivity : AppCompatActivity() {
 
             if (count == 4) count = 0
         }
+
         if (secPhoto.isNotEmpty()) pushin(tp)
-        var margin = View.inflate(this, R.layout.empty, null) as LinearLayout
-        container.addView(margin)
-        raw.add(margin)
+        pushin(View.inflate(this, R.layout.empty, null) as LinearLayout)
+    }
+
+    private fun show(photo:Photo) {
+        (applicationContext as data).tmp = photo
+        var starter = Intent(this,gallery::class.java)
+        startActivity(starter)
+    }
+
+    private fun manageTag() {
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,9 +146,6 @@ class MainActivity : AppCompatActivity() {
             this.requestPermissions(PERMISSIONS_STORAGE, 1)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        finder = HashMap()
-        raw = mutableListOf()
 
         sortMode = 1
         setSupportActionBar(toolbar)
@@ -167,7 +172,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         (applicationContext as data).album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
         searchView.setSuggestions((applicationContext as data).album.getAllTag())
-        display(sortMode)
+        display((applicationContext as data).album.getAllPhoto(1),sortMode)
     }
 
     override fun onStop() {
@@ -192,19 +197,19 @@ class MainActivity : AppCompatActivity() {
             R.id.timeSort -> {
                 if(sortMode != 1){
                     sortMode = 1
-                    display(sortMode)
+                    display((applicationContext as data).album.getAllPhoto(1),sortMode)
                 }
             }
             R.id.sizeSort -> {
                 if(sortMode != 2) {
                     sortMode = 2
-                    display(sortMode)
+                    display((applicationContext as data).album.getAllPhoto(1),sortMode)
                 }
             }
             R.id.modifySort -> {
                 if(sortMode != 3) {
                     sortMode = 3
-                    display(sortMode)
+                    display((applicationContext as data).album.getAllPhoto(1),sortMode)
                 }
             }
         }
@@ -235,11 +240,19 @@ class MainActivity : AppCompatActivity() {
             finish()
         else
         {
+            val dirPath = "/data/data/com.hustproject.photomanager/files/"
+            val dir = File(dirPath)
+            if(!dir.exists())dir.mkdir()
+            var fst = File(dirPath+"IfFirst")
+            if(fst.exists())return
+            fst.createNewFile()
+
+            Toast.makeText(this, resources.getString(R.string.init), Toast.LENGTH_LONG).show()
             (applicationContext as data).init()
             (applicationContext as data).album.TagLoad()
             (applicationContext as data).album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
             searchView.setSuggestions((applicationContext as data).album.getAllTag())
-            display(sortMode);
+            display((applicationContext as data).album.getAllPhoto(1),sortMode)
         }
     }
 }

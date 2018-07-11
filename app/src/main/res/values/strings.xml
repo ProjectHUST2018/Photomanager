@@ -11,4 +11,5 @@
     <string name="title_activity_trash">TrashActivity</string>
     <string name="errorString">svarg</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="init">初始化中...</string>
 </resources>
