@@ -1,13 +1,11 @@
 package com.hustproject.photomanager
 
-import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color.rgb
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
-import android.view.KeyEvent.KEYCODE_ENTER
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -16,29 +14,28 @@ import com.bumptech.glide.request.RequestOptions
 import com.hustproject.photomanager.R.layout.tag_display
 import com.hustproject.photomanager.R.layout.tag_present
 import kotlinx.android.synthetic.main.activity_gallery.*
-import kotlinx.android.synthetic.main.activity_trash.*
 import kotlinx.android.synthetic.main.tag_new.view.*
 import kotlinx.android.synthetic.main.tag_present.view.*
 
-class gallery : AppCompatActivity() {
+class Gallery : AppCompatActivity() {
 
-    var displayState = 0
+    private var displayState = 0
     lateinit var view : LinearLayout
     lateinit var input : LinearLayout
 
     private fun loadTag(){
         view.removeAllViews()
         for(tag in (applicationContext as data).tmp.Tag){
-            var tp = View.inflate(this,tag_present,null) as LinearLayout
-            tp.tg.setText(tag)
+            val tp = View.inflate(this,tag_present,null) as LinearLayout
+            tp.tg.text = tag
             tp.tg.setTextColor(rgb(0,0,0))
             view.addView(tp)
 
-            tp.del.setOnClickListener { View->
+            tp.del.setOnClickListener { _->
                 view.removeView(tp)
                 (applicationContext as data).album.deleteTag(tag)
                 for(photo in (applicationContext as data).album.allPhoto){
-                    if(photo.thisItem.equals((applicationContext as data).tmp.thisItem)){
+                    if(photo.Path.equals((applicationContext as data).tmp.Path)){
                         photo.delTag(tag)
                         break
                     }
@@ -70,7 +67,7 @@ class gallery : AppCompatActivity() {
         input = View.inflate(this,R.layout.tag_new,null) as LinearLayout
         view.addView(input)
 
-        input.add.setOnClickListener { View ->
+        input.add.setOnClickListener { _ ->
             createTag(input.read.text.toString())
         }
 

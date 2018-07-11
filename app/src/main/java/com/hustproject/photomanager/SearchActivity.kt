@@ -109,7 +109,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun show(photo:Photo) {
         (applicationContext as data).tmp = photo
-        var starter = Intent(this,gallery::class.java)
+        var starter = Intent(this,Gallery::class.java)
         startActivity(starter)
     }
 
