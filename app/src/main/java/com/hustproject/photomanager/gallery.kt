@@ -47,7 +47,7 @@ class gallery : AppCompatActivity() {
         })
 
         if((applicationContext as data).tmp.isDeleted == true){
-            tag.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_settings_backup_restore_white_48dp))
+            tag.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_settings_backup_restore_white_36dp))
 
             delete.setOnClickListener(View.OnClickListener { View->
                 (applicationContext as data).album.remove((applicationContext as data).tmp)
