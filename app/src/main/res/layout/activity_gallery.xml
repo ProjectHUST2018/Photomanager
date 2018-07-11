@@ -23,4 +23,38 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/bottom"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:layout_constraintBottom_toBottomOf="@id/gallery">
+
+        <View
+            android:id="@+id/block1"
+            android:layout_width="90dp"
+            android:layout_height="48dp"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_delete_white_48dp"
+            app:layout_constraintLeft_toRightOf="@id/block1"/>
+
+        <ImageView
+            android:id="@+id/tag"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_attach_file_white_48dp"
+            app:layout_constraintRight_toLeftOf="@id/block2"/>
+
+        <View
+            android:id="@+id/block2"
+            android:layout_width="90dp"
+            android:layout_height="48dp"
+            app:layout_constraintRight_toRightOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
 </android.support.constraint.ConstraintLayout>

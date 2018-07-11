@@ -11,12 +11,12 @@ import java.io.IOException;
 
 public class Photo {
     public File thisItem;
-    public int[] delete = new int[6];                                                      //相片的删除时间
     public long  photoSize;                                                   //相片的大小
     public Boolean  isDeleted;                                                //判断相片是否被删除
     public Set<String> Tag;                                                   //标签
     public String Path;                                                       //相片的存储路
     public String photoTime;
+    public String photoName;
     public String photoTimeStd;
     public long modifyTime;
     public long countSec;
@@ -38,9 +38,9 @@ public class Photo {
         isDeleted   =   false;
         Path        =   item.getAbsolutePath();
 
-        delete      =   new int[6];
         Tag         =   new HashSet<String>();
         exif        =   new ExifInterface(Path);
+        photoName   =   Path.substring(Path.lastIndexOf("/")+1);
         photoSize   =   new FileInputStream(item).available();
         photoTime   =   exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL);  //拍摄时间
         modifyTime  =   item.lastModified();
@@ -68,11 +68,6 @@ public class Photo {
         else d=mont2[res[1]-1];
 
         return c+(d+res[2]-1)*(long)86400+res[3]*(long)3600+res[4]*(long)60+(long)res[5];
-    }
-
-    public long getDeleteTime(){
-        if(!isDeleted)return -1;
-        return calc(delete);
     }
 
     private long getPhotoTime() {
@@ -106,10 +101,6 @@ public class Photo {
         return res;
     }
 
-    public String getPhotoName(){
-        return Path.substring(Path.lastIndexOf("/")+1,Path.length());                                  //相片的名字
-    }
-
     public String getPhotoSize(){
         long tmp = photoSize;
         String[] unit = new String[]{"B","KB","MB","GB"};
@@ -134,26 +125,5 @@ public class Photo {
             else res[i] = Double.valueOf(tmp[i].toString());
 
         return res;
-    }
-
-    public void delete(){
-        isDeleted    =   true;
-        Calendar c   =   Calendar.getInstance();
-        delete[0]    =   c.get(Calendar.YEAR);
-        delete[1]    =   c.get(Calendar.MONTH);
-        delete[2]    =   c.get(Calendar.DAY_OF_MONTH);
-        delete[3]    =   c.get(Calendar.HOUR_OF_DAY);
-        delete[4]    =   c.get(Calendar.MINUTE);
-        delete[5]    =   c.get(Calendar.SECOND);
-    }
-
-    public void recover(){
-        isDeleted    =   false;
-        delete[0]    =   0;
-        delete[1]    =   0;
-        delete[2]    =   0;
-        delete[3]    =   0;
-        delete[4]    =   0;
-        delete[5]    =   0;
     }
 }

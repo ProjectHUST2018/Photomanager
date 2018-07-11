@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,9 +25,9 @@ import java.util.Set;
 
 public class Scanner{
     File file;
-    public Set<Photo> allPhoto;
     private Map<String,Integer> allTag;
     public List<Photo> delPhoto;
+    public List<Photo> allPhoto;
 
     public String[] getAllTag() {
         int sz = 0, cnt = 0;
@@ -58,12 +60,15 @@ public class Scanner{
     }
 
     public List<Photo> getAllPhoto(int mode) {
-        List<Photo>res;
-        if(mode == 2)res = delPhoto;
-        else {
-            res = new LinkedList<>();
-            for (Photo item : allPhoto)
+        List<Photo>res = new LinkedList<>();
+        if(mode == 1) {
+            for(Photo item : allPhoto)
                 res.add(item);
+        }
+        else {
+            for(Photo item : delPhoto)
+                res.add(item);
+            Collections.reverse(res);
         }
         return res;
     }
@@ -120,6 +125,13 @@ public class Scanner{
             }
         }
 
+        for (Iterator<Photo> it = delPhoto.iterator(); it.hasNext(); ) {
+            Photo tmp = it.next();
+            if (allScanFile.contains(tmp.thisItem))
+                allScanFile.remove(tmp.thisItem);
+            else it.remove();
+        }
+
         for (File item : allScanFile)
             addPhoto(new Photo(item));
     }
@@ -165,8 +177,10 @@ public class Scanner{
                     addTag(tt);
                 }
             }
-            if(thisPhoto != null)
+            if(thisPhoto != null) {
+                thisPhoto.isDeleted = true;
                 delPhoto.add(thisPhoto);
+            }
         }
 
         in.close();
@@ -195,24 +209,60 @@ public class Scanner{
         out.close();
     }
 
+    public void remove(Photo item){
+        item.thisItem.delete();
+        for(Iterator<Photo>it = delPhoto.iterator();it.hasNext();)
+        {
+            Photo thisone = it.next();
+            if(thisone == item){
+                it.remove();
+                return;
+            }
+        }
+    }
+
+    public void recover(Photo item) {
+        item.isDeleted = false;
+        for(String tag:item.Tag)
+            addTag(tag);
+        if(item.photoTime != "-1")
+            addTag(item.photoTimeStd);
+        allPhoto.add(item);
+        for(Iterator<Photo>it = delPhoto.iterator();it.hasNext();)
+        {
+            Photo tp = it.next();
+            if(tp.photoName == item.photoName) {
+                it.remove();
+                return;
+            }
+        }
+    }
+
     public void delete(Photo item) {
-        if(!allPhoto.contains(item))return;
+        item.isDeleted = true;
         for(String tag:item.Tag)
             deleteTag(tag);
         if(item.photoTime != "-1")
             deleteTag(item.photoTimeStd);
         delPhoto.add(item);
-        allPhoto.remove(item);
+        for(Iterator<Photo>it = allPhoto.iterator();it.hasNext();)
+        {
+            Photo tp = it.next();
+            if(tp.photoName == item.photoName) {
+                it.remove();
+                return;
+            }
+        }
     }
 
     Scanner() throws IOException{
         String dirPath = "/data/data/com.hustproject.photomanager/files/";
         File dir = new File(dirPath);
 
-        allPhoto  = new HashSet<Photo>();
+        allPhoto  = new LinkedList<>();
+        delPhoto = new LinkedList<Photo>();
         allTag  = new HashMap<String,Integer>();
         file = new File(dirPath+"TagSave");
-        delPhoto = new LinkedList<Photo>();
 
         if(!dir.exists())dir.mkdir();
         if(!file.exists()) {

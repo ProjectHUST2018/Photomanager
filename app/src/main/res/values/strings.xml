@@ -9,7 +9,11 @@
     <string name="recAll">回收全部</string>
     <string name="searchHint">输入完整的标签来搜索图片</string>
     <string name="title_activity_trash">TrashActivity</string>
-    <string name="errorString">svarg</string>
     <string name="title_activity_search">SearchActivity</string>
     <string name="init">初始化中...</string>
+    <string name="del">已移入回收站</string>
+    <string name="rem">已彻底移除</string>
+    <string name="rec">图片已恢复</string>
+    <string name="allrec">已经全部恢复</string>
+    <string name="allrem">已经全部删除</string>
 </resources>

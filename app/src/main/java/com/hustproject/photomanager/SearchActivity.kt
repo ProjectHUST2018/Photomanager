@@ -23,7 +23,6 @@ class SearchActivity : AppCompatActivity() {
 
     lateinit var key: String
     private var raw: MutableList<LinearLayout> = mutableListOf()
-    private var finder:MutableMap<ImageView,Photo> = HashMap()
 
     private fun pushin(tp: LinearLayout) {
         var margin = View.inflate(this, R.layout.margin, null) as LinearLayout
@@ -57,28 +56,17 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private class cmp4 : Comparator<Photo> {
-        override fun compare(a: Photo, b: Photo): Int {
-            if (a.deleteTime  < b.deleteTime) return 1
-            if (a.deleteTime == b.deleteTime) return 0
-            return -1
-        }
-    }
-
     private fun display(secPhoto:List<Photo>,mode: Int) {
         var count = 0
         lateinit var tp: LinearLayout
-        for (item in raw) {
-            finder.remove(item.imageView1)
+        for (item in raw)
             containerSearch.removeView(item)
-        }
         raw.clear()
 
         when (mode) {
             1 -> Collections.sort(secPhoto, cmp1())
             2 -> Collections.sort(secPhoto, cmp2())
             3 -> Collections.sort(secPhoto, cmp3())
-            4 -> Collections.sort(secPhoto, cmp4())
         }
 
         for (i in secPhoto.indices) {
@@ -107,12 +95,10 @@ class SearchActivity : AppCompatActivity() {
                 else -> tp.imageView4
             }
 
-            registerForContextMenu(thisImage)
             Glide.with(this).load(secPhoto[i].thisItem).apply((applicationContext as data).opt).into(thisImage)
             thisImage.setOnClickListener(View.OnClickListener {
                 view:View -> show(secPhoto[i])
             })
-            finder[thisImage] = secPhoto[i]
 
             if (count == 4) count = 0
         }
@@ -140,14 +126,10 @@ class SearchActivity : AppCompatActivity() {
         toolbarSearch.setNavigationOnClickListener( View.OnClickListener {
             view: View -> finish()
         })
+    }
 
+    override fun onStart() {
+        super.onStart()
         display((applicationContext as data).album.getAllPhoto(key),1);
     }
-
-    override fun onCreateContextMenu(menu: ContextMenu, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
-        super.onCreateContextMenu(menu!!, v, menuInfo)
-        menu.add(0, 1, Menu.NONE, "编辑标签")
-        menu.add(0, 2, Menu.NONE, "移入回收站")
-    }
-
 }
