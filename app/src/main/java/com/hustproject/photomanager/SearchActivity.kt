@@ -96,9 +96,9 @@ class SearchActivity : AppCompatActivity() {
             }
 
             Glide.with(this).load(secPhoto[i].thisItem).apply((applicationContext as data).opt).into(thisImage)
-            thisImage.setOnClickListener(View.OnClickListener {
+            thisImage.setOnClickListener {
                 view:View -> show(secPhoto[i])
-            })
+            }
 
             if (count == 4) count = 0
         }
@@ -124,7 +124,7 @@ class SearchActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         toolbarSearch.setNavigationOnClickListener( View.OnClickListener {
-            view: View -> finish()
+            view:View -> finish()
         })
     }
 

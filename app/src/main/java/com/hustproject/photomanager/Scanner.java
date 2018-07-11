@@ -74,24 +74,17 @@ public class Scanner{
     }
 
     public void addTag(String tag) {
-        if(tag == "-1" || tag == null)return;
         if(allTag.get(tag) == null)allTag.put(tag,1);
         else allTag.put(tag,allTag.get(tag)+1);
     }
 
     public void deleteTag(String tag) {
-        if(tag == "-1" || tag == null)return;
         allTag.put(tag,allTag.get(tag)-1);
     }
 
     private void addPhoto(Photo New) {
-        if(New.photoTime != null && New.photoTime != "-1"){
-            String date= New.photoTimeStd;
-            if(!New.Tag.contains(date)) {
-                addTag(date);
-                New.addTag(date);
-            }
-        }
+        for(String tag :New.Tag)
+            addTag(tag);
         allPhoto.add(New);
     }
 
@@ -113,27 +106,20 @@ public class Scanner{
             }
         }
 
-        for (Iterator<Photo> it = allPhoto.iterator(); it.hasNext(); ) {
-            Photo tmp = it.next();
-            if (allScanFile.contains(tmp.thisItem))
-                allScanFile.remove(tmp.thisItem);
-            else {
-                deleteTag(tmp.photoTime);
-                for (String tag : tmp.Tag)
-                    deleteTag(tag);
-                it.remove();
+        for (Photo item : allPhoto)
+            allScanFile.remove(item.thisItem);
+
+        for (Photo item : delPhoto)
+            allScanFile.remove(item.thisItem);
+
+        for (File item : allScanFile) {
+            Photo tmp = new Photo(item);
+            if(tmp.photoTime != "-1") {
+                tmp.addTag(tmp.photoTimeStd);
+                addTag(tmp.photoTimeStd);
             }
+            addPhoto(tmp);
         }
-
-        for (Iterator<Photo> it = delPhoto.iterator(); it.hasNext(); ) {
-            Photo tmp = it.next();
-            if (allScanFile.contains(tmp.thisItem))
-                allScanFile.remove(tmp.thisItem);
-            else it.remove();
-        }
-
-        for (File item : allScanFile)
-            addPhoto(new Photo(item));
     }
 
     public void TagLoad() throws IOException {
@@ -151,10 +137,8 @@ public class Scanner{
             int tp = Integer.valueOf(in.readLine());
             for(int j = 0; j < tp; j++) {
                 String tt = in.readLine();
-                if (thisPhoto != null) {
+                if (thisPhoto != null)
                     thisPhoto.addTag(tt);
-                    addTag(tt);
-                }
             }
             if(thisPhoto != null)
                 addPhoto(thisPhoto);
@@ -172,10 +156,8 @@ public class Scanner{
             int tp = Integer.valueOf(in.readLine());
             for(int j = 0; j < tp; j++) {
                 String tt = in.readLine();
-                if (thisPhoto != null) {
+                if (thisPhoto != null)
                     thisPhoto.addTag(tt);
-                    addTag(tt);
-                }
             }
             if(thisPhoto != null) {
                 thisPhoto.isDeleted = true;
@@ -198,6 +180,7 @@ public class Scanner{
             for(String item : photo.Tag)
                 out.write((item+"\n").getBytes());
         }
+
         out.write((delPhoto.size()+"\n").getBytes());
         for(Photo photo : delPhoto){
             out.write((photo.Path+"\n").getBytes());
@@ -214,7 +197,7 @@ public class Scanner{
         for(Iterator<Photo>it = delPhoto.iterator();it.hasNext();)
         {
             Photo thisone = it.next();
-            if(thisone == item){
+            if(thisone.Path.equals(item.Path)){
                 it.remove();
                 return;
             }
@@ -225,13 +208,11 @@ public class Scanner{
         item.isDeleted = false;
         for(String tag:item.Tag)
             addTag(tag);
-        if(item.photoTime != "-1")
-            addTag(item.photoTimeStd);
         allPhoto.add(item);
         for(Iterator<Photo>it = delPhoto.iterator();it.hasNext();)
         {
             Photo tp = it.next();
-            if(tp.photoName == item.photoName) {
+            if(tp.Path.equals(item.Path)) {
                 it.remove();
                 return;
             }
@@ -242,13 +223,11 @@ public class Scanner{
         item.isDeleted = true;
         for(String tag:item.Tag)
             deleteTag(tag);
-        if(item.photoTime != "-1")
-            deleteTag(item.photoTimeStd);
         delPhoto.add(item);
         for(Iterator<Photo>it = allPhoto.iterator();it.hasNext();)
         {
             Photo tp = it.next();
-            if(tp.photoName == item.photoName) {
+            if(tp.photoName.equals(item.photoName)) {
                 it.remove();
                 return;
             }

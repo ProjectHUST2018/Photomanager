@@ -1,7 +1,9 @@
 package com.hustproject.photomanager
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.ContextMenu
 import android.view.Menu
@@ -96,9 +98,9 @@ class TrashActivity : AppCompatActivity() {
             }
 
             Glide.with(this).load(secPhoto[i].thisItem).apply((applicationContext as data).opt).into(thisImage)
-            thisImage.setOnClickListener(View.OnClickListener {
+            thisImage.setOnClickListener {
                 view:View -> show(secPhoto[i])
-            })
+            }
             if (count == 4) count = 0
         }
 
@@ -138,21 +140,32 @@ class TrashActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            1 ->{
-                var tmp = (applicationContext as data).album.getAllPhoto(2)
-                for(item in tmp)
-                    (applicationContext as data).album.recover(item)
-                Toast.makeText(this, resources.getString(R.string.allrec), Toast.LENGTH_LONG).show()
-            }
-            2 ->{
-                var tmp = (applicationContext as data).album.getAllPhoto(2)
-                for(item in tmp)
-                    (applicationContext as data).album.remove(item)
-                Toast.makeText(this, resources.getString(R.string.allrem), Toast.LENGTH_LONG).show()
+        if((applicationContext as data).album.delPhoto.size != 0){
+            when(item.itemId){
+                1 ->{
+                    var tmp = (applicationContext as data).album.getAllPhoto(2)
+                    for(item in tmp)
+                        (applicationContext as data).album.recover(item)
+                    Toast.makeText(this, resources.getString(R.string.allrec), Toast.LENGTH_LONG).show()
+                    finish()
+                }
+                2 ->{
+                    AlertDialog.Builder(this)
+                            .setTitle("抹除照片")
+                            .setMessage("\n"+"你确定要永久删除这些照片吗？")
+                            .setNegativeButton("取消",DialogInterface.OnClickListener { dialog, i ->
+                            })
+                            .setPositiveButton("确定",DialogInterface.OnClickListener { dialog, i ->
+                                var tmp = (applicationContext as data).album.getAllPhoto(2)
+                                for(item in tmp)
+                                    (applicationContext as data).album.remove(item)
+                                Toast.makeText(this, resources.getString(R.string.allrem), Toast.LENGTH_LONG).show()
+                                finish()
+                            })
+                            .create().show()
+                }
             }
         }
-        finish()
         return super.onOptionsItemSelected(item)
     }
 }

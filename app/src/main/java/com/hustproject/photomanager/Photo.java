@@ -6,6 +6,9 @@ import java.io.FileInputStream;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.io.IOException;
 
@@ -13,24 +16,16 @@ public class Photo {
     public File thisItem;
     public long  photoSize;                                                   //相片的大小
     public Boolean  isDeleted;                                                //判断相片是否被删除
-    public Set<String> Tag;                                                   //标签
+    public List<String> Tag;                                                   //标签
     public String Path;                                                       //相片的存储路
     public String photoTime;
     public String photoName;
     public String photoTimeStd;
     public long modifyTime;
     public long countSec;
+    public int width,height;
 
     private ExifInterface exif;
-
-    public void addTag    (String tag) {
-        if(tag == "-1" || tag == null)return;
-        Tag.add   (tag);
-    }
-    public void deleteTag (String tag) {
-        if(tag == "-1" || tag == null)return;
-        Tag.remove(tag);
-    }
 
     Photo(final File item) throws IOException{
 
@@ -38,21 +33,40 @@ public class Photo {
         isDeleted   =   false;
         Path        =   item.getAbsolutePath();
 
-        Tag         =   new HashSet<String>();
+        Tag         =   new LinkedList<>();
         exif        =   new ExifInterface(Path);
-        photoName   =   Path.substring(Path.lastIndexOf("/")+1);
+        photoName   =   thisItem.getName();
         photoSize   =   new FileInputStream(item).available();
         photoTime   =   exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL);  //拍摄时间
         modifyTime  =   item.lastModified();
+
+        height = Integer.valueOf(exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH));      //相片的高
+        width  = Integer.valueOf(exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH));       //相片的宽
 
         if(photoTime == null) {
              photoTime = exif.getAttribute(ExifInterface.TAG_DATETIME_DIGITIZED);
             if(photoTime == null)photoTime = "-1";
         }
-        if(photoTime != "-1") {
+
+        if(!photoTime.equals("-1")) {
             photoTimeStd = photoTime.substring(0, 4) + "年" + photoTime.substring(5, 7) + "月" + photoTime.substring(8, 10) + "日";
             countSec = getPhotoTime();
         }
+    }
+
+    public void delTag(String tag){
+        for(Iterator<String>it = Tag.iterator();it.hasNext();){
+            String tmp = it.next();
+            if(tmp.equals(tag)){
+                it.remove();
+                break;
+            }
+        }
+    }
+
+    public void addTag(String tag){
+        delTag(tag);
+        Tag.add(tag);
     }
 
     private long calc(int[] res) {
@@ -85,20 +99,6 @@ public class Photo {
             res[i] = Integer.parseInt(tmp[i]);
 
         return calc(res);
-    }
-
-    public int[]getPhotoStandard(){
-        String start[] = new String[2];
-        int res[] = new int[2];
-
-        start[0] = exif.getAttribute(ExifInterface.TAG_IMAGE_LENGTH);      //相片的长
-        start[1] = exif.getAttribute(ExifInterface.TAG_IMAGE_WIDTH);         //相片的宽
-
-        for(int i = 0;i < 2;i++)
-            if(start[i] == null) return new int[]{-1,-1};
-            else res[i]=Integer.valueOf(start[i].toString());
-
-        return res;
     }
 
     public String getPhotoSize(){

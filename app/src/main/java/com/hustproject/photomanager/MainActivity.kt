@@ -107,9 +107,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             Glide.with(this).load(secPhoto[i].thisItem).apply((applicationContext as data).opt).into(thisImage)
-            thisImage.setOnClickListener(View.OnClickListener {
+            thisImage.setOnClickListener {
                 view:View -> show(secPhoto[i])
-            })
+            }
             if (count == 4) count = 0
         }
 
@@ -202,18 +202,6 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-       /* var info = item.menuInfo as AdapterView.AdapterContextMenuInfo
-        when(item.itemId){
-            1 -> manageTag()
-            2 -> {
-                (applicationContext as data).album.delete(finder[info.targetView])
-                display(sortMode)
-            }
-        }*/
-        return super.onContextItemSelected(item)
-    }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
@@ -227,7 +215,6 @@ class MainActivity : AppCompatActivity() {
             if(fst.exists())return
             fst.createNewFile()
 
-            Toast.makeText(this, resources.getString(R.string.init), Toast.LENGTH_LONG).show()
             (applicationContext as data).init()
             (applicationContext as data).album.TagLoad()
             (applicationContext as data).album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
