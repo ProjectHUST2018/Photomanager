@@ -137,6 +137,8 @@ class MainActivity : AppCompatActivity() {
         sortMode = 1
         setSupportActionBar(toolbar)
         searchView.setVoiceSearch(false)
+        shadowTitle.bringToFront()
+        toolbar.bringToFront()
 
         var starter = Intent(this,SearchActivity::class.java)
         searchView.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {

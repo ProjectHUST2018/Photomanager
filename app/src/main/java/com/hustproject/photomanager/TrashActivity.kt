@@ -123,6 +123,8 @@ class TrashActivity : AppCompatActivity() {
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        shadowTitleTrash.bringToFront()
+        toolbarTrash.bringToFront()
         toolbarTrash.setNavigationOnClickListener( View.OnClickListener {
             view:View -> finish()
         })

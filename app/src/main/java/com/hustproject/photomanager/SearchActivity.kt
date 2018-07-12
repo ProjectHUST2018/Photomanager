@@ -123,6 +123,8 @@ class SearchActivity : AppCompatActivity() {
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        shadowTitleSearch.bringToFront()
+        toolbarSearch.bringToFront()
         toolbarSearch.setNavigationOnClickListener( View.OnClickListener {
             view:View -> finish()
         })
