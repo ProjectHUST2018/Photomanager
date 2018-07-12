@@ -35,6 +35,10 @@ class MainActivity : AppCompatActivity() {
     private var sortMode: Int = 1
     private var raw: MutableList<LinearLayout> = mutableListOf()
 
+    private val dirPath = "/data/data/com.hustproject.photomanager/files/"
+    private val dir = File(dirPath)
+    val fst = File(dirPath+"IfFirst")
+
     private fun pushin(tp: LinearLayout) {
         var margin = View.inflate(this, R.layout.margin, null) as LinearLayout
         container.addView(margin)
@@ -148,14 +152,14 @@ class MainActivity : AppCompatActivity() {
         })
 
         (applicationContext as data).init()
-        (applicationContext as data).album.TagLoad()
+        if(fst.exists())(applicationContext as data).album.TagLoad()
     }
 
     override fun onStart() {
         super.onStart()
-        (applicationContext as data).album.fileScan(contentResolver)
-        searchView.setSuggestions((applicationContext as data).album.getAllTag())
-        display((applicationContext as data).album.getAllPhoto(1),sortMode)
+        if(fst.exists())(applicationContext as data).album.fileScan(contentResolver)
+        if(fst.exists())searchView.setSuggestions((applicationContext as data).album.getAllTag())
+        if(fst.exists())display((applicationContext as data).album.getAllPhoto(1),sortMode)
     }
 
     override fun onStop() {
@@ -205,13 +209,11 @@ class MainActivity : AppCompatActivity() {
             finish()
         else
         {
-            val dirPath = "/data/data/com.hustproject.photomanager/files/"
-            val dir = File(dirPath)
             if(!dir.exists())dir.mkdir()
-            val fst = File(dirPath+"IfFirst")
             if(fst.exists())return
             fst.createNewFile()
 
+            (applicationContext as data).album.TagLoad()
             (applicationContext as data).album.fileScan(contentResolver)
             searchView.setSuggestions((applicationContext as data).album.getAllTag())
             display((applicationContext as data).album.getAllPhoto(1),sortMode)
