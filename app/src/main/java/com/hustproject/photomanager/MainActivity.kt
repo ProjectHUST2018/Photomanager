@@ -1,6 +1,7 @@
 package com.hustproject.photomanager
 
 import android.Manifest
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -123,10 +124,6 @@ class MainActivity : AppCompatActivity() {
         startActivity(starter)
     }
 
-    private fun manageTag() {
-
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             this.requestPermissions(PERMISSIONS_STORAGE, 1)
@@ -156,7 +153,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        (applicationContext as data).album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
+        (applicationContext as data).album.fileScan(contentResolver)
         searchView.setSuggestions((applicationContext as data).album.getAllTag())
         display((applicationContext as data).album.getAllPhoto(1),sortMode)
     }
@@ -167,7 +164,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        getMenuInflater().inflate(R.menu.menu,menu)
+        menuInflater.inflate(R.menu.menu,menu)
         var item:MenuItem  = menu.findItem(R.id.search)
         searchView.setMenuItem(item)
         searchView.bringToFront()
@@ -211,13 +208,11 @@ class MainActivity : AppCompatActivity() {
             val dirPath = "/data/data/com.hustproject.photomanager/files/"
             val dir = File(dirPath)
             if(!dir.exists())dir.mkdir()
-            var fst = File(dirPath+"IfFirst")
+            val fst = File(dirPath+"IfFirst")
             if(fst.exists())return
             fst.createNewFile()
 
-            (applicationContext as data).init()
-            (applicationContext as data).album.TagLoad()
-            (applicationContext as data).album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
+            (applicationContext as data).album.fileScan(contentResolver)
             searchView.setSuggestions((applicationContext as data).album.getAllTag())
             display((applicationContext as data).album.getAllPhoto(1),sortMode)
         }

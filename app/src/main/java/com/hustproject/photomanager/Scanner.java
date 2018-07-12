@@ -1,6 +1,10 @@
 package com.hustproject.photomanager;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.os.Environment;
+import android.provider.MediaStore;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -35,7 +39,9 @@ public class Scanner{
         for (Map.Entry<String, Integer> entry : allTag.entrySet())
             if(entry.getValue() > 0)cnt++;
 
-        String res[] = new String[allTag.size()];
+        String[] res;
+        if(cnt == 0)res = new String[1];
+        else res = new String[cnt];
 
         for (Map.Entry<String, Integer> entry : allTag.entrySet())
             if(entry.getValue() > 0)res[sz++]=entry.getKey();
@@ -88,37 +94,29 @@ public class Scanner{
         allPhoto.add(New);
     }
 
-    public void fileScan(File file)throws Exception {
-        Set<File> allScanFile = new HashSet<File>();                //存储所有现存图片
-        Queue<File> Directory = new LinkedList<File>();             //广搜所用队列
-
-        Directory.offer(file);                                      //广搜
-        while (!Directory.isEmpty()) {
-            file = Directory.poll();
-            File[] allFile = file.listFiles();
-            if (allFile == null) continue;
-
-            for (File item : allFile) {
-                if (item.isDirectory() && !item.isHidden())
-                    Directory.offer(item);
-                else if (!item.isHidden() && (item.getName().endsWith(".jpeg") || item.getName().endsWith(".png") || item.getName().endsWith(".jpg") || item.getName().endsWith(".bmp") || item.getName().endsWith(".wmf") || item.getName().endsWith(".ico")))
-                    allScanFile.add(item);
-            }
+    public void fileScan(ContentResolver root)throws Exception {
+        Set<String>file = new HashSet<>();
+        Cursor place = root.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,null,null,null,null);
+        while(place.moveToNext()){
+            byte[] tmp = place.getBlob(place.getColumnIndex(MediaStore.Images.Media.DATA));
+            file.add(new String(tmp,0,tmp.length-1));
         }
 
-        for (Photo item : allPhoto)
-            allScanFile.remove(item.thisItem);
+        for(Photo item : allPhoto)
+            file.remove(item.Path);
+        for(Photo item : delPhoto)
+            file.remove(item.Path);
 
-        for (Photo item : delPhoto)
-            allScanFile.remove(item.thisItem);
-
-        for (File item : allScanFile) {
-            Photo tmp = new Photo(item);
-            if(tmp.photoTime != "-1") {
-                tmp.addTag(tmp.photoTimeStd);
-                addTag(tmp.photoTimeStd);
+        for(String path: file) {
+            File tmp = new File(path);
+            if(tmp.exists() && path.indexOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()) != -1) {
+                Photo newone = new Photo(tmp);
+                if(!newone.photoTime.equals("-1")){
+                    newone.addTag(newone.photoTimeStd);
+                    addTag(newone.photoTimeStd);
+                }
+                addPhoto(new Photo(tmp));
             }
-            addPhoto(tmp);
         }
     }
 
