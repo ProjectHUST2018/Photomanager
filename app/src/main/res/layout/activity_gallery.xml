@@ -46,6 +46,14 @@
             app:layout_constraintLeft_toRightOf="@id/block1"/>
 
         <ImageView
+            android:id="@+id/inf"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_info_outline_white_36dp"
+            app:layout_constraintRight_toLeftOf="@id/tag"
+            app:layout_constraintLeft_toRightOf="@id/delete"/>
+
+        <ImageView
             android:id="@+id/tag"
             android:layout_width="36dp"
             android:layout_height="36dp"

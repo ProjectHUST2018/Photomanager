@@ -116,7 +116,7 @@ class Gallery : AppCompatActivity() {
         if((applicationContext as data).tmp.isDeleted == true){
             tag.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ic_settings_backup_restore_white_36dp))
 
-            delete.setOnClickListener(View.OnClickListener { View->
+            delete.setOnClickListener{ View->
                 AlertDialog.Builder(this)
                         .setTitle("抹除照片")
                         .setMessage("\n"+"你确定要永久删除这张照片吗？")
@@ -128,24 +128,40 @@ class Gallery : AppCompatActivity() {
                             finish()
                         })
                         .create().show()
-            })
+            }
 
-            tag.setOnClickListener(View.OnClickListener { View->
+            tag.setOnClickListener{ View->
                 (applicationContext as data).album.recover((applicationContext as data).tmp)
                 Toast.makeText(this, resources.getString(R.string.rec), Toast.LENGTH_LONG).show()
                 finish()
-            })
+            }
         }
         else {
-            delete.setOnClickListener(View.OnClickListener { View ->
+            delete.setOnClickListener{ View ->
                 (applicationContext as data).album.delete((applicationContext as data).tmp)
                 Toast.makeText(this, resources.getString(R.string.del), Toast.LENGTH_LONG).show()
                 finish()
-            })
+            }
 
-            tag.setOnClickListener(View.OnClickListener { View ->
+            tag.setOnClickListener { View ->
                 showTag()
-            })
+            }
+        }
+
+        var info = ""
+        if(!(applicationContext as data).tmp.photoTime.equals("-1"))
+            info += "\n"+"拍摄时间"+"\n"+(applicationContext as data).tmp.photoTimeStd+"\n"
+
+        info += "\n"+"文件大小"+"\n"+(applicationContext as data).tmp.getPhotoSize()+"\n"
+        info += "\n"+"图片尺寸"+"\n"+(applicationContext as data).tmp.width+" x "+(applicationContext as data).tmp.height+"\n"
+
+        inf.setOnClickListener{_->
+            AlertDialog.Builder(this)
+                    .setTitle("详情")
+                    .setMessage(info)
+                    .setPositiveButton("关闭",DialogInterface.OnClickListener{dialog, i ->
+                    })
+                    .create().show()
         }
     }
 }

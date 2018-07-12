@@ -101,29 +101,14 @@ public class Photo {
         return calc(res);
     }
 
-    public String getPhotoSize(){
-        long tmp = photoSize;
-        String[] unit = new String[]{"B","KB","MB","GB"};
+    public String getPhotoSize() {
+        double tmp = photoSize;
+        String[] unit = new String[]{"B", "KB", "MB", "GB"};
         DecimalFormat df = new DecimalFormat("#.00");
 
         int i;
-        for(i=0;i<3&&tmp>=1024;i++,tmp/=1024);
+        for (i = 0; i < 3 && tmp >= 1024; i++, tmp /= 1024) ;
 
-        return  df.format((double)photoSize)+unit[i];
-    }
-
-    public double[] getPhotoGPS(){
-        String tmp[] = new String[3];                              //相片拍摄时的经纬度
-        double res[] = new double[3];                          //string转double型
-
-        tmp[0] = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);     //纬度
-        tmp[1] = exif.getAttribute(ExifInterface.TAG_GPS_DEST_LATITUDE);   //经度
-        tmp[2] = exif.getAttribute(ExifInterface.TAG_GPS_ALTITUDE);
-
-        for(int i = 0; i <= 2; i++)
-            if(tmp[i] == null) return new double[] {-1,-1,-1};
-            else res[i] = Double.valueOf(tmp[i].toString());
-
-        return res;
+        return df.format(tmp) + unit[i];
     }
 }
