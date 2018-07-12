@@ -157,7 +157,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if(fst.exists())(applicationContext as data).album.fileScan(contentResolver)
+        if(fst.exists())(applicationContext as data).album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
         if(fst.exists())searchView.setSuggestions((applicationContext as data).album.getAllTag())
         if(fst.exists())display((applicationContext as data).album.getAllPhoto(1),sortMode)
     }
@@ -214,7 +214,7 @@ class MainActivity : AppCompatActivity() {
             fst.createNewFile()
 
             (applicationContext as data).album.TagLoad()
-            (applicationContext as data).album.fileScan(contentResolver)
+            (applicationContext as data).album.fileScan(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM))
             searchView.setSuggestions((applicationContext as data).album.getAllTag())
             display((applicationContext as data).album.getAllPhoto(1),sortMode)
         }
